@@ -36,7 +36,7 @@
 		{ "name": "groovy" }
       ];
 	var playlist = [];
-	var currentTrack = 0;
+	var currentTrack = -1;
 	var nextTrackTimer;
 	var currentTrackPosition = 0;
 	var previousPlayState = 0;
@@ -263,11 +263,11 @@
 	  
 	  <div class="row">
 			<div class="col-md-5">
-				<textarea id="textArea" class="form-control" rows="10"></textarea>
+				<textarea id="textArea" class="form-control" rows="10" placeholder="Paste a newline separated list of commit hashes here, then click 'Add Hashes'. "></textarea>
 			</div>
 			<div class="col-md-6">
-				<div>You will need an Rdio account which you may get for free at <a href="http://www.rdio.com">Rdio.com</a></div>
-				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code></div>
+				<div>You will need an Rdio account which you may get for free at <a href="http://www.rdio.com">Rdio.com</a>.</div>
+				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code>.</div>
 				<button id="add" style="margin-top:20px">Add Hashes</button>
 			</div>
 		</div>
