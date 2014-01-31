@@ -23,6 +23,13 @@
 		{ "name": "60s" },
 		{ "name": "50s" }
       ];
+	var moodList = [
+        { "name": "happy" },
+        { "name": "angry" },
+        { "name": "sad" },
+        { "name": "relaxing" },
+        { "name": "excited"  }
+      ];
 	var playlist = [];
 	var currentTrack = 0;
 	var nextTrackTimer;
@@ -56,11 +63,13 @@
 			//song_min_hotttnesss: .2,
 			artist_min_familiarity: .7,
 			limit: true,
+			sort: "song_hotttnesss-desc"
 		};
 		
 		console.log(termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)]);
 		
 		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)].name;
+		searchOptions["mood"] = moodList[Math.floor((parseInt("0x"+hash.substring(7, 9))/0xFF) * moodList.length)].name;
 		searchOptions["mode"] = parseInt("0x"+hash) % 2;
 		searchOptions["key"] = parseInt("0x"+hash) % 11;
 		//searchOptions["min_energy"] = parseInt("0x"+hash)
