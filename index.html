@@ -14,23 +14,26 @@
         { "name": "rock" },
         { "name": "alternative" },
         { "name": "jazz" },
-        { "name": "classical" },
-        { "name": "indie" },
 		{ "name": "rap" },
+        { "name": "classical" },
 		{ "name": "pop" },
 		{ "name": "00s" },
 		{ "name": "90s" },
 		{ "name": "80s" },
 		{ "name": "70s" },
-		{ "name": "60s" },
-		{ "name": "50s" }
+		{ "name": "heavy metal"},
+		{ "name": "hip hop"},
+		{ "name": "disco"},
+		{ "name": "funk"}
       ];
 	var moodList = [
         { "name": "happy" },
-        { "name": "angry" },
         { "name": "sad" },
         { "name": "relaxing" },
-        { "name": "excited"  }
+        { "name": "excited"  },
+		{ "name": "smooth" },
+		{ "name": "calming" },
+		{ "name": "groovy" }
       ];
 	var playlist = [];
 	var currentTrack = 0;
@@ -63,17 +66,14 @@
 		var searchOptions = {
 			bucket: ['id:rdio-US', 'tracks' ],
 			//song_min_hotttnesss: .2,
-			artist_min_familiarity: .7,
+			artist_min_familiarity: .5,
 			limit: true,
 			sort: "song_hotttnesss-desc"
 		};
-		
-		console.log(termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)]);
-		
-		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)].name;
+				
+		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(12, 14))/0xFF) * termList.length)].name;
 		searchOptions["mood"] = moodList[Math.floor((parseInt("0x"+hash.substring(7, 9))/0xFF) * moodList.length)].name;
-		searchOptions["mode"] = parseInt("0x"+hash) % 2;
-		searchOptions["key"] = parseInt("0x"+hash) % 11;
+		searchOptions["mode"] = parseInt("0x"+hash.substring(hash.length-2, hash.length)) % 2;
 		//searchOptions["min_energy"] = parseInt("0x"+hash)
 		
 		return searchOptions;
@@ -96,14 +96,28 @@
 		playlist = playlist.concat(hashList);
 		for(var i = 0; i < hashList.length; i++)
 		{
+			var options = GetSearchParameters(hashList[i]);
+		
 			var link = $('<a href="#"></a>').append(hashList[i]);
 			link.click(CreateSongClickFunction(hashList[i]));
 			
 			var col = $("<td>");
 			col.attr("id", hashList[i]+"-td");
 			
+			var style = $("<td>");
+			style.append(options.style);
+			
+			var mood = $("<td>");
+			mood.append(options.mood);
+			
+			var mode = $("<td>");
+			mode.append(options.mode);
+			
 			var row = $("<tr>").append(col);
 			row.append($("<td>").append(link));
+			row.append(style);
+			row.append(mood);
+			row.append(mode);
 			row.attr("id", hashList[i]);
 			$("#tablePlayList").append(
 				row
@@ -252,6 +266,7 @@
 				<textarea id="textArea" class="form-control" rows="10"></textarea>
 			</div>
 			<div class="col-md-6">
+				<div>You will need an Rdio account which you may get for free at <a href="http://www.rdio.com">Rdio.com</a></div>
 				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code></div>
 				<button id="add" style="margin-top:20px">Add Hashes</button>
 			</div>
@@ -262,7 +277,10 @@
 					<thead>
 						<tr>
 							<th class="col-sm-1">
-							<th class="col-sm-11">Hash</th>
+							<th class="col-sm-8">Hash</th>
+							<th class="1">Style</th>
+							<th class="1">Mood</th>
+							<th class="1">Mode</th>
 						<tr>
 					</thead>
 				</table>
