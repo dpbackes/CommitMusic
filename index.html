@@ -98,8 +98,11 @@
 		{
 			var link = $('<a href="#"></a>').append(hashList[i]);
 			link.click(CreateSongClickFunction(hashList[i]));
+			
+			var row = $("<tr>").append($("<td>").append(link));
+			row.attr("id", hashList[i]);
 			$("#tablePlayList").append(
-				$("<tr>").append($("<td>").append(link))
+				row
 			);
 		}
 	}
@@ -109,6 +112,8 @@
 		return function()
 			{
 				GetSongId(hash, function(songList){
+					
+					$("#"+playlist[currentTrack]).removeClass("info");
 					Play(hash, songList);
 				});				
 			};
@@ -117,11 +122,14 @@
 	function Play(hash, songList)
 	{
 		currentTrack = playlist.indexOf(hash);
+		
+		$("#"+playlist[currentTrack]).addClass("info");
 		$('#api').rdio().play(songList[0]);
 	}
 	
 	function PlayNextSong()
 	{
+		$("#"+playlist[currentTrack]).removeClass("info");
 		if(++currentTrack < playlist.length)
 		{
 			GetSongId(playlist[currentTrack], function(songList){
@@ -224,11 +232,6 @@
 				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code></div>
 				<button id="add" style="margin-top:20px">Add Hashes</button>
 			</div>
-			<!-- <div style="float:left">
-				<span><h3>Play List</h3></span>
-				<ul id="playlist">
-				</ul>
-			</div> -->
 		</div>
 		<div class="row">
 			<div class="table-responsive">
