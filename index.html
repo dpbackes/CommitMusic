@@ -98,8 +98,8 @@
 		{
 			var link = $('<a href="#"></a>').append(hashList[i]);
 			link.click(CreateSongClickFunction(hashList[i]));
-			$("#playlist").append(
-				$("<li>").append(link)
+			$("#tablePlayList").append(
+				$("<tr>").append($("<td>").append(link))
 			);
 		}
 	}
@@ -188,43 +188,59 @@
   </script>
 </head>
 <body>
-  <div id="api"></div>
-  <div class="well">
-	<div class="row">
-		<div class="col-md-3">
-			<img id="art" src="" height="200" width="200" >
+	<div class="container">
+	  <div id="api"></div>
+	  <div class="jumbotron">
+		<div class="row">
+			<div class="col-md-3">
+				<img id="art" src="" height="200" width="200" >
+			</div>
+			<div class="col-md-4">
+				<div><b>Track: </b><span id="track"></span></div>
+				<div><b>Album: </b><span id="album"></span></div>
+				<div><b>Artist: </b><span id="artist"></span></div>
+				<div><b>Position: </b>
+				  <span style="display:inline-block;width:200px;border:1px solid black;">
+					<span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
+				  </span>
+				</div>
+				<div style="margin-top:20px">
+					<button id="previous">&lt;&lt;</button>
+					<button id="play">|&gt;</button>
+					<button id="pause">||</button>
+					<button id="next">&gt;&gt;</button>
+					<button id="forward">Forward 60</button>
+				</div>
+			</div>
+		   
 		</div>
-		<div class="col-md-4">
-			<div><b>Track: </b><span id="track"></span></div>
-			<div><b>Album: </b><span id="album"></span></div>
-			<div><b>Artist: </b><span id="artist"></span></div>
-			<div><b>Position: </b>
-			  <span style="display:inline-block;width:200px;border:1px solid black;">
-				<span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
-			  </span>
+	  </div>
+	  
+	  <div class="row">
+			<div class="col-md-5">
+				<textarea id="textArea" class="form-control" rows="10"></textarea>
+			</div>
+			<div class="col-md-6">
+				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code></div>
+				<button id="add" style="margin-top:20px">Add Hashes</button>
+			</div>
+			<!-- <div style="float:left">
+				<span><h3>Play List</h3></span>
+				<ul id="playlist">
+				</ul>
+			</div> -->
+		</div>
+		<div class="row">
+			<div class="table-responsive">
+				<table class="table table-striped" id="tablePlayList">
+					<thead>
+						<tr>
+							<th>Hash</th>
+						<tr>
+					</thead>
+				</table>
 			</div>
 		</div>
-	   
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-		  <button id="previous">&lt;&lt;</button>
-		  <button id="play">|&gt;</button>
-		  <button id="pause">||</button>
-		  <button id="next">&gt;&gt;</button>
-		  <button id="forward">Forward 60</button>
-		</div>
-	</div>
-  </div>
-	<div style="float:left">
-		<textarea id="textArea" cols="40" rows="10"></textarea>
-		<div>To get a list of commit hashes use "git log --pretty=format:"%H""</div>
-		<button id="add">Add Hashes</button>
-	</div>
-	<div style="float:left">
-		<span><h3>Play List</h3></span>
-		<ul id="playlist">
-		</ul>
 	</div>
 </body>
 </html>
