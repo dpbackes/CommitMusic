@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>jquery.rdio test</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script src="jquery.rdio.js"></script>
+  <script src="jquery.echonest.js"></script>
+  
+  <script type="text/javascript">
+    var duration = 1; // track the duration of the currently playing track
+	var termList = [
+        { "name": "rock" },
+        { "name": "alternative" },
+        { "name": "jazz" },
+        { "name": "classical" },
+        { "name": "indie" },
+		{ "name": "rap" },
+		{ "name": "pop" },
+		{ "name": "00s" },
+		{ "name": "90s" },
+		{ "name": "80s" },
+		{ "name": "70s" },
+		{ "name": "60s" },
+		{ "name": "50s" }
+      ]
+	function GetTrackIdList(searchResult)
+	{
+		var returnVal = [];
+		
+		for(var i = 0; i< searchResult.length; i++)
+		{
+		//searchResult.foreach(result)
+			result = searchResult[i];
+			if(result && result.tracks.length > 0)
+			{
+				for(var j = 0; j < result.tracks.length; j++)
+				{
+					track = result.tracks[j];
+					returnVal.push(track.foreign_id.split(":")[2]);
+				}
+			}
+		}
+		
+		return returnVal;
+	}
+	
+	function GetSearchParameters(hash)
+	{
+		var searchOptions = {
+			bucket: ['id:rdio-US', 'tracks' ],
+			//song_min_hotttnesss: .2,
+			artist_min_familiarity: .7,
+			limit: true,
+		};
+		
+		console.log(termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)]);
+		
+		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(4, 6))/0xFF) * termList.length)].name;
+		searchOptions["mode"] = parseInt("0x"+hash) % 2;
+		searchOptions["key"] = parseInt("0x"+hash) % 11;
+		//searchOptions["min_energy"] = parseInt("0x"+hash)
+		
+		return searchOptions;
+	}
+	
+	function GetSongId(hash, callBack)
+	{
+		var echonest = new EchoNest("ISMDTQJRFL6DUWFGN");
+		echonest.song("*").search( function(result) {
+			
+			trackList = GetTrackIdList(result.songs);
+			
+			callBack(trackList);
+			
+		}, GetSearchParameters(hash));
+	}
+	
+	function AddFromList(hashList)
+	{
+		for(var i = 0; i < hashList.length; i++)
+		{
+			var link = $('<a href="#"></a>').append(hashList[i]);
+			link.click(CreateSongClickFunction(hashList[i]));
+			$("#playlist").append(
+				$("<li>").append(link)
+			);
+		}
+	}
+	
+	function CreateSongClickFunction(hash)
+	{
+		return function()
+			{
+				GetSongId(hash, function(songList)
+				{
+					$('#api').rdio().play(songList[0]);
+				});				
+			};
+	}
+	
+    $(document).ready(function() {
+		jQuery.ajaxSettings.traditional = true;
+	
+		var searchOptions = {
+			//style: 'rock',
+			bucket: ['id:rdio-US', 'tracks' ],
+			song_min_hotttnesss: .2,
+			artist_min_familiarity: .9,
+			limit: true
+		};
+		
+		var currentTrack = 0;
+		var trackList;
+		$('#api').bind('ready.rdio', function() {
+		});
+		$('#api').bind('playingTrackChanged.rdio', function(e, playingTrack, sourcePosition) {
+			if (playingTrack) {
+				duration = playingTrack.duration;
+				$('#art').attr('src', playingTrack.icon);
+				$('#track').text(playingTrack.name);
+				$('#album').text(playingTrack.album);
+				$('#artist').text(playingTrack.artist);
+			}
+		});
+		$('#api').bind('positionChanged.rdio', function(e, position) {
+			$('#position').css('width', Math.floor(100*position/duration)+'%');
+		});
+		$('#api').bind('playStateChanged.rdio', function(e, playState) {
+			if (playState == 0) { // paused
+				$('#play').show();
+				$('#pause').hide();
+			} else {
+				$('#play').hide();
+				$('#pause').show();
+			}
+		});
+		// this is a valid playback token for localhost.
+		// but you should go get your own for your own domain.
+        $('#api').rdio('GAlNi78J_____zlyYWs5ZG02N2pkaHlhcWsyOWJtYjkyN2xvY2FsaG9zdEbwl7EHvbylWSWFWYMZwfc=');
+
+        $('#previous').click(function() { $('#api').rdio().previous(); });
+        $('#play').click(function() { $('#api').rdio().play(); });
+        $('#pause').click(function() { $('#api').rdio().pause(); });
+        $('#next').click(function() { $('#api').rdio().play(trackList[++currentTrack]); });//$('#api').rdio().next(); });
+		$('#add').click(function() { AddFromList($('#textArea').val().split('\n')); });
+	  
+    });
+  </script>
+</head>
+<body>
+  <div id="api"></div>
+  <img id="art" src="" height="200" width="200" style="float:left;margin-right:20px;">
+  <div>
+    <div><b>Track: </b><span id="track"></span></div>
+    <div><b>Album: </b><span id="album"></span></div>
+    <div><b>Artist: </b><span id="artist"></span></div>
+    <div><b>Position: </b>
+      <span style="display:inline-block;width:200px;border:1px solid black;">
+        <span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
+      </span></div>
+    <div>
+      <button id="previous">&lt;&lt;</button>
+      <button id="play">|&gt;</button>
+      <button id="pause">||</button>
+      <button id="next">&gt;&gt;</button>
+    </div>
+	<div>
+		<textarea id="textArea" cols="40" rows="10"></textarea>
+		<button id="add">Add Hashes</button>
+	</div>
+	<div>
+		<span><h3>Play List</h3></span>
+		<ul id="playlist">
+		</ul>
+	</div>
+  </div>
+</body>
+</html>
