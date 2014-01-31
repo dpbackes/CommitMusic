@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>jquery.rdio test</title>
+  <title>Commit Music</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
   <script src="jquery.rdio.js"></script>
   <script src="jquery.echonest.js"></script>
@@ -36,7 +36,7 @@
 		{ "name": "groovy" }
       ];
 	var playlist = [];
-	var currentTrack = 0;
+	var currentTrack = -1;
 	var nextTrackTimer;
 	var currentTrackPosition = 0;
 	var previousPlayState = 0;
@@ -73,7 +73,6 @@
 				
 		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(12, 14))/0xFF) * termList.length)].name;
 		searchOptions["mood"] = moodList[Math.floor((parseInt("0x"+hash.substring(7, 9))/0xFF) * moodList.length)].name;
-		console.log(parseInt("0x"+hash.substring(hash.length-2, hash.length)));
 		searchOptions["mode"] = parseInt("0x"+hash.substring(hash.length-2, hash.length)) % 2;
 		//searchOptions["min_energy"] = parseInt("0x"+hash)
 		
@@ -264,11 +263,12 @@
 	  
 	  <div class="row">
 			<div class="col-md-5">
-				<textarea id="textArea" class="form-control" rows="10"></textarea>
+				<textarea id="textArea" class="form-control" rows="10" placeholder="Paste a newline separated list of commit hashes here, then click 'Add Hashes'. "></textarea>
 			</div>
 			<div class="col-md-6">
-				<div>You will need an Rdio account which you may get for free at <a href="http://www.rdio.com">Rdio.com</a></div>
-				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code></div>
+				<div><h2>Welcome to Commit Music, the app that creates a playlist from your git commit log. </h2></div>
+				<div>You will need an Rdio account which you may get for free at <a href="http://www.rdio.com">Rdio.com</a>.</div>
+				<div>To get a list of commit hashes use <code>git log --pretty=format:"%H"</code>.</div>
 				<button id="add" style="margin-top:20px">Add Hashes</button>
 			</div>
 		</div>
