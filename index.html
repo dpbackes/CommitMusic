@@ -5,6 +5,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
   <script src="jquery.rdio.js"></script>
   <script src="jquery.echonest.js"></script>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
   
   <script type="text/javascript">
     var duration = 1; // track the duration of the currently playing track
@@ -187,31 +189,42 @@
 </head>
 <body>
   <div id="api"></div>
-  <img id="art" src="" height="200" width="200" style="float:left;margin-right:20px;">
-  <div>
-    <div><b>Track: </b><span id="track"></span></div>
-    <div><b>Album: </b><span id="album"></span></div>
-    <div><b>Artist: </b><span id="artist"></span></div>
-    <div><b>Position: </b>
-      <span style="display:inline-block;width:200px;border:1px solid black;">
-        <span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
-      </span></div>
-    <div>
-      <button id="previous">&lt;&lt;</button>
-      <button id="play">|&gt;</button>
-      <button id="pause">||</button>
-      <button id="next">&gt;&gt;</button>
-	  <button id="forward">Forward 60</button>
-    </div>
-	<div>
+  <div class="well">
+	<div class="row">
+		<div class="col-md-3">
+			<img id="art" src="" height="200" width="200" >
+		</div>
+		<div class="col-md-4">
+			<div><b>Track: </b><span id="track"></span></div>
+			<div><b>Album: </b><span id="album"></span></div>
+			<div><b>Artist: </b><span id="artist"></span></div>
+			<div><b>Position: </b>
+			  <span style="display:inline-block;width:200px;border:1px solid black;">
+				<span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
+			  </span>
+			</div>
+		</div>
+	   
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+		  <button id="previous">&lt;&lt;</button>
+		  <button id="play">|&gt;</button>
+		  <button id="pause">||</button>
+		  <button id="next">&gt;&gt;</button>
+		  <button id="forward">Forward 60</button>
+		</div>
+	</div>
+  </div>
+	<div style="float:left">
 		<textarea id="textArea" cols="40" rows="10"></textarea>
+		<div>To get a list of commit hashes use "git log --pretty=format:"%H""</div>
 		<button id="add">Add Hashes</button>
 	</div>
-	<div>
+	<div style="float:left">
 		<span><h3>Play List</h3></span>
 		<ul id="playlist">
 		</ul>
 	</div>
-  </div>
 </body>
 </html>
