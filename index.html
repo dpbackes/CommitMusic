@@ -99,7 +99,11 @@
 			var link = $('<a href="#"></a>').append(hashList[i]);
 			link.click(CreateSongClickFunction(hashList[i]));
 			
-			var row = $("<tr>").append($("<td>").append(link));
+			var col = $("<td>");
+			col.attr("id", hashList[i]+"-td");
+			
+			var row = $("<tr>").append(col);
+			row.append($("<td>").append(link));
 			row.attr("id", hashList[i]);
 			$("#tablePlayList").append(
 				row
@@ -112,11 +116,16 @@
 		return function()
 			{
 				GetSongId(hash, function(songList){
-					
-					$("#"+playlist[currentTrack]).removeClass("info");
+					ResetPlayMarkers();
 					Play(hash, songList);
 				});				
 			};
+	}
+	
+	function ResetPlayMarkers()
+	{
+		$("#"+playlist[currentTrack]+"-td").empty();
+		$("#"+playlist[currentTrack]).removeClass("info");
 	}
 	
 	function Play(hash, songList)
@@ -124,14 +133,28 @@
 		currentTrack = playlist.indexOf(hash);
 		
 		$("#"+playlist[currentTrack]).addClass("info");
+		$("#"+playlist[currentTrack]+"-td").append('<span class="glyphicon glyphicon-volume-up"></span>');
 		$('#api').rdio().play(songList[0]);
 	}
 	
 	function PlayNextSong()
 	{
-		$("#"+playlist[currentTrack]).removeClass("info");
-		if(++currentTrack < playlist.length)
+		ResetPlayMarkers();
+		if(currentTrack < playlist.length-1)
 		{
+			currentTrack++;
+			GetSongId(playlist[currentTrack], function(songList){
+				Play(playlist[currentTrack], songList);
+			});
+		}
+	}
+	
+	function PlayPreviousSong()
+	{
+		ResetPlayMarkers();
+		if(currentTrack > 0)
+		{
+			currentTrack--;
 			GetSongId(playlist[currentTrack], function(songList){
 				Play(playlist[currentTrack], songList);
 			});
@@ -183,7 +206,7 @@
 		// but you should go get your own for your own domain.
         $('#api').rdio('GAlNi78J_____zlyYWs5ZG02N2pkaHlhcWsyOWJtYjkyN2xvY2FsaG9zdEbwl7EHvbylWSWFWYMZwfc=');
 
-        $('#previous').click(function() { $('#api').rdio().previous(); });
+        $('#previous').click(function() { PlayPreviousSong() });
         $('#play').click(function() { $('#api').rdio().play(); });
         $('#pause').click(function() { $('#api').rdio().pause(); });
         $('#next').click(function() { 
@@ -213,11 +236,11 @@
 				  </span>
 				</div>
 				<div style="margin-top:20px">
-					<button id="previous">&lt;&lt;</button>
-					<button id="play">|&gt;</button>
-					<button id="pause">||</button>
-					<button id="next">&gt;&gt;</button>
-					<button id="forward">Forward 60</button>
+					<button id="previous"><span class="glyphicon glyphicon-backward"></button>
+					<button id="play"><span class="glyphicon glyphicon-play"></button>
+					<button id="pause"><span class="glyphicon glyphicon-pause"></button>
+					<button id="next"><span class="glyphicon glyphicon-forward"></span></button>
+					<button id="forward">Forward 60s</button>
 				</div>
 			</div>
 		   
@@ -238,7 +261,8 @@
 				<table class="table table-striped" id="tablePlayList">
 					<thead>
 						<tr>
-							<th>Hash</th>
+							<th class="col-sm-1">
+							<th class="col-sm-11">Hash</th>
 						<tr>
 					</thead>
 				</table>
