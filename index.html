@@ -24,7 +24,8 @@
 		{ "name": "heavy metal"},
 		{ "name": "hip hop"},
 		{ "name": "disco"},
-		{ "name": "funk"}
+		{ "name": "funk"},
+		{ "name": "blue"}
       ];
 	var moodList = [
         { "name": "happy" },
@@ -33,8 +34,28 @@
         { "name": "excited"  },
 		{ "name": "smooth" },
 		{ "name": "calming" },
-		{ "name": "groovy" }
+		{ "name": "groovy" },
+		{ "name": "epic"},
+		{ "name": "industrial"},
+		{ "name": "cool"},
+		{ "name": "fun"},
+		{ "name": "ominous"},
+		{ "name": "laid-back"}
+		,		{ "name": "party music"}
+		//,		{ "name": "elegant"}
       ];
+	  
+	var sortList = [
+		{ "name": "song_hotttnesss-desc"}
+		/*,
+		{ "name": "energy-desc"},
+		{ "name": "tempo-asc"},
+		{ "name": "tempo-desc"},
+		{ "name": "artist_start_year-asc"},
+		{ "name": "artist_start_year-desc"},
+		{ "name": "artist_end_year-asc"},
+		{ "name": "artist_end_year-desc"}*/
+	];
 	var playlist = [];
 	var currentTrack = -1;
 	var nextTrackTimer;
@@ -66,14 +87,18 @@
 		var searchOptions = {
 			bucket: ['id:rdio-US', 'tracks' ],
 			//song_min_hotttnesss: .2,
-			artist_min_familiarity: .5,
+			artist_min_familiarity: .4,
 			limit: true,
-			sort: "song_hotttnesss-desc"
+			//sort: "song_hotttnesss-desc"
 		};
 				
-		searchOptions["style"] = termList[Math.floor((parseInt("0x"+hash.substring(12, 14))/0xFF) * termList.length)].name;
-		searchOptions["mood"] = moodList[Math.floor((parseInt("0x"+hash.substring(7, 9))/0xFF) * moodList.length)].name;
+		console.log(Math.floor((parseInt("0x"+hash.substring(7, 9))/0xFF) * moodList.length));
+				
+		searchOptions["style"] = termList[Math.round((parseInt("0x"+hash.substring(12, 14))/0xFF) * (termList.length-1))].name;
+		searchOptions["mood"] = moodList[Math.round((parseInt("0x"+hash.substring(7, 9))/0xFF) * (moodList.length-1))].name;
+		searchOptions["sort"] = sortList[Math.round((parseInt("0x"+hash.substring(0, 2))/0xFF) * (sortList.length-1))].name;
 		searchOptions["mode"] = parseInt("0x"+hash.substring(hash.length-2, hash.length)) % 2;
+		searchOptions["key"] = parseInt("0x"+hash.substring(hash.length-4, hash.length-2)) % 11;
 		//searchOptions["min_energy"] = parseInt("0x"+hash)
 		
 		return searchOptions;
@@ -113,11 +138,15 @@
 			var mode = $("<td>");
 			mode.append(options.mode);
 			
+			var key = $("<td>");
+			key.append(options.key);
+			
 			var row = $("<tr>").append(col);
 			row.append($("<td>").append(link));
 			row.append(style);
 			row.append(mood);
 			row.append(mode);
+			row.append(key);
 			row.attr("id", hashList[i]);
 			$("#tablePlayList").append(
 				row
@@ -278,10 +307,11 @@
 					<thead>
 						<tr>
 							<th class="col-sm-1">
-							<th class="col-sm-8">Hash</th>
+							<th class="col-sm-7">Hash</th>
 							<th class="1">Style</th>
 							<th class="1">Mood</th>
 							<th class="1">Mode</th>
+							<th class="1">key</th>
 						<tr>
 					</thead>
 				</table>
